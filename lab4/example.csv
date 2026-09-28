@@ -1,3 +1,2 @@
-nr, max_value, min_value, avg, mean
-0, val, val, val, val
-
+   max_value,min_value,avg,mean
+   val,val,val,val
