@@ -9,7 +9,7 @@ test = {
           'code': r"""
           >>> # You either didn't add the 'Total Pay ($)' column, or 
           >>> # you mislabeled it
-          >>> 'Total Pay ($)' in compensation.column_labels
+          >>> 'Total Pay ($)' in compensation.labels
           True
           """,
           'hidden': False,
