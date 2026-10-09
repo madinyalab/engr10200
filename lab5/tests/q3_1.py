@@ -1,6 +1,6 @@
 OK_FORMAT = True
 test = {
-  'name': '',
+  'name': 'q3_1',
   'points': 1,
   'suites': [
     {
@@ -8,7 +8,7 @@ test = {
         {
           'code': r"""
           >>> # Make sure your probability is expressed as a decimal value
-          >>> np.isclose(pizza_prob, 0.7)
+          >>> bool(np.isclose(pizza_prob, 0.7))
           True
           """,
           'hidden': False,

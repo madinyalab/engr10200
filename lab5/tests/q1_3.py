@@ -1,15 +1,23 @@
 OK_FORMAT = True
 test = {
-  'name': '',
+  'name': 'q1_3',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          >>> abs(5.7 - np.std([simulate_observations() for _ in range(5000)])) < .2
+          >>> len(observations)
+          7
+          """,
+          'hidden': False,
+          'locked': False
+        },
+        {
+          'code': r"""
+          >>> bool(abs(5.77 - np.std([simulate_observations() for _ in range(5000)])) < .2)
           True
-          >>> abs(21.5 - np.mean([simulate_observations() for _ in range(5000)])) < .2
+          >>> bool(abs(21.5 - np.mean([simulate_observations() for _ in range(5000)])) < .2)
           True
           """,
           'hidden': False,

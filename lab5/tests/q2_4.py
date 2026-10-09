@@ -1,29 +1,29 @@
 OK_FORMAT = True
 test = {
-  'name': 'Question',
+  'name': 'q2_4',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          >>> len(convenience_stats)
-          2
+          >>> len(convenience_sample.columns)
+          12
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          >>> round(float(convenience_stats[0]), 2) == 20.36
-          True
+          >>> len(convenience_sample)
+          44
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          >>> round(float(convenience_stats[1]), 2) == 2383533.82
+          >>> bool((convenience_sample['Age'] < 22).all())
           True
           """,
           'hidden': False,

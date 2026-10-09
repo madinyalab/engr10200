@@ -1,22 +1,20 @@
 OK_FORMAT = True
 test = {
-  'name': 'Question',
+  'name': 'q2_3',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          >>> len(convenience_sample.columns)
-          12
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          >>> len(convenience_sample)
-          414
+          >>> stats = compute_statistics(result)
+          >>> plots.close('all')
+          >>> len(stats)
+          2
+          >>> round(float(stats[0]), 2) == 26.54
+          True
+          >>> round(float(stats[1]), 2) == 4269775.77
+          True
           """,
           'hidden': False,
           'locked': False

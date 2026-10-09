@@ -1,21 +1,18 @@
 OK_FORMAT = True
 test = {
-  'name': 'Question',
+  'name': 'q2_2',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          >>> round(float(compute_statistics(full_data)[0]), 2) == 26.54
+          >>> old = result.assign(Age=result['Age'] * 3)
+          >>> bins = histograms(old)
+          >>> plots.close('all')
+          >>> bool(np.max(bins) > np.max(old['Age']))
           True
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          >>> round(float(compute_statistics(full_data)[1]), 2) == 4269775.77
+          >>> bool(np.min(bins) == np.min(old['Age']))
           True
           """,
           'hidden': False,

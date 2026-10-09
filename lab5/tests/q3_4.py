@@ -1,13 +1,13 @@
 OK_FORMAT = True
 test = {
-  'name': '',
+  'name': 'q3_4',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          >>> np.isclose(winning_prob, 0.4)
+          >>> bool(np.isclose(winning_prob, 0.4))
           True
           """,
           'hidden': False,
