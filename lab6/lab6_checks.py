@@ -172,6 +172,41 @@ _q("q2_4",
    )
 
 # ----------------------------------------------------------------------------
+# Part 3: Monty Hall with more doors
+# ----------------------------------------------------------------------------
+def _rate(g, n, switch, trials=3000):
+    f = g("monty_hall_n")
+    return np.mean([bool(f(n, switch)) for _ in range(trials)])
+
+
+_q("q3_1",
+   ("monty_hall_n should return True or False",
+    lambda g: isinstance(g("monty_hall_n")(3, True), (bool, np.bool_))),
+   ("With 3 doors, staying should win about 1/3 of the time",
+    lambda g: _close(_rate(g, 3, False), 1 / 3, 0.04)),
+   ("With 3 doors, switching should win about 2/3 of the time",
+    lambda g: _close(_rate(g, 3, True), 2 / 3, 0.04)),
+   ("With 4 doors, staying should win about 1/4 of the time",
+    lambda g: _close(_rate(g, 4, False), 1 / 4, 0.04)),
+   ("With 4 doors, switching should win about 3/8. Monty opens ONE goat door, and you switch "
+    "to a random door that is neither your pick nor the opened one.",
+    lambda g: _close(_rate(g, 4, True), 3 / 8, 0.04)),
+   )
+
+_q("q3_2",
+   ("`monty_table` should have columns 'doors', 'stay', 'switch' and one row per door count",
+    lambda g: list(g("monty_table").columns) == ["doors", "stay", "switch"] and list(g("monty_table")["doors"]) == [3, 4, 5, 10]),
+   ("The 'stay' column should be close to 1/doors",
+    lambda g: np.allclose(g("monty_table")["stay"], 1 / np.array([3, 4, 5, 10]), atol=0.03)),
+   ("The 'switch' column should be close to (n-1) / (n(n-2))",
+    lambda g: np.allclose(g("monty_table")["switch"],
+                          [(n - 1) / (n * (n - 2)) for n in [3, 4, 5, 10]], atol=0.03)),
+   ("Compare the columns. Is switching better for every number of doors?",
+    lambda g: g("always_switch") is True),
+   )
+
+
+# ----------------------------------------------------------------------------
 # public functions
 # ----------------------------------------------------------------------------
 def _run(name):
