@@ -61,19 +61,6 @@ _q("q1_1",
    )
 
 _q("q1_2",
-   ("`values` should be the unique meter readings, from np.unique",
-    lambda g: np.array_equal(g("values"), np.unique(g("meter")))),
-   ("`counts` should be how many times each reading appears (return_counts=True)",
-    lambda g: np.array_equal(g("counts"), np.unique(g("meter"), return_counts=True)[1])),
-   ("`mode_unique` should be the value with the largest count (use np.argmax)",
-    lambda g: _close(g("mode_unique"), g("values")[np.argmax(g("counts"))], 1e-9)),
-   ("`mode_scipy` should come from stats.mode(meter).mode",
-    lambda g: _close(g("mode_scipy"), g("mode_unique"), 1e-9)),
-   ("`mode_count` should come from stats.mode(meter).count",
-    lambda g: int(g("mode_count")) == int(np.max(g("counts")))),
-   )
-
-_q("q1_3",
    ("in_spec(np.array([95, 96, 100, 104, 105])) should give [False, True, True, True, False]. "
     "Are your limits inclusive (>= and <=)?",
     lambda g: list(g("in_spec")(np.array([95, 96, 100, 104, 105]))) == [False, True, True, True, False]),
@@ -85,7 +72,7 @@ _q("q1_3",
     lambda g: _close(g("rule_estimate"), 0.95, 0.006)),
    )
 
-_q("q1_4",
+_q("q1_3",
    ("`R_bins` should start at 90",
     lambda g: _close(g("R_bins")[0], 90, 1e-9)),
    ("`R_bins` should end at 110. np.arange does not include its stop value.",
@@ -94,7 +81,7 @@ _q("q1_4",
     lambda g: np.allclose(np.diff(g("R_bins")), 0.5)),
    )
 
-_q("q1_5",
+_q("q1_4",
    ("r1, r2, and r3 should each have 5000 values",
     lambda g: len(g("r1")) == len(g("r2")) == len(g("r3")) == 5000),
    ("r1, r2, and r3 should be drawn from `resistors` with np.random.choice",
@@ -111,7 +98,7 @@ _q("q1_5",
     lambda g: _close(g("p_all_in_sim"), g("p_all_in_rule"), 0.02)),
    )
 
-_q("q1_6",
+_q("q1_5",
    ("`circuit_ok` should be in_spec(total, 297, 303)",
     lambda g: np.array_equal(g("circuit_ok"), (g("total") >= 297) & (g("total") <= 303))),
    ("`p_circuit_ok` should be the fraction of circuits that are OK",
@@ -121,17 +108,6 @@ _q("q1_6",
                      np.mean(g("circuit_ok") & g("all_in")) / np.mean(g("all_in")), 1e-9)),
    ("Are there circuits where every resistor passed but the circuit still failed?",
     lambda g: g("qc_guarantees_circuit") is False),
-   )
-
-_q("q1_7",
-   ("`worn` should have 10,000 values between 94 and 106 (use np.random.uniform)",
-    lambda g: len(g("worn")) == 10000 and np.min(g("worn")) >= 94 and np.max(g("worn")) <= 106),
-   ("`worn_mean` and `worn_sd` should use np.mean and np.std on `worn`",
-    lambda g: _close(g("worn_mean"), np.mean(g("worn")), 1e-9) and _close(g("worn_sd"), np.std(g("worn")), 1e-9)),
-   ("`worn_frac_in_spec` should use your in_spec function on `worn`",
-    lambda g: _close(g("worn_frac_in_spec"), np.mean((g("worn") >= 96) & (g("worn") <= 104)), 1e-9)),
-   ("`better_machine` should be the string 'new' or 'worn'. Which one has more resistors in spec?",
-    lambda g: g("better_machine") == "new"),
    )
 
 # ----------------------------------------------------------------------------
@@ -194,50 +170,6 @@ _q("q2_4",
    ("About 95% of the sample means should be within 2 SD, as the 68-95-99.7 rule predicts",
     lambda g: 0.92 <= g("frac_within_2sd") <= 0.985),
    )
-
-_q("q2_5",
-   ("sd_of_sample_means(100, 200) should return a single number near 4",
-    lambda g: np.ndim(g("sd_of_sample_means")(100, 200)) == 0 and 2.5 < g("sd_of_sample_means")(100, 200) < 5.5),
-   ("`spreads` should have one value for each n in [25, 100, 400], getting smaller",
-    lambda g: len(g("spreads")) == 3 and g("spreads")[0] > g("spreads")[1] > g("spreads")[2]),
-   ("`spread_ratio` should be spreads[0] / spreads[2]. Expect a value near 4.",
-    lambda g: _close(g("spread_ratio"), g("spreads")[0] / g("spreads")[2], 1e-9) and 3 < g("spread_ratio") < 5),
-   )
-
-# ----------------------------------------------------------------------------
-# Part 3: Monty Hall with more doors
-# ----------------------------------------------------------------------------
-def _rate(g, n, switch, trials=3000):
-    f = g("monty_hall_n")
-    return np.mean([bool(f(n, switch)) for _ in range(trials)])
-
-
-_q("q3_1",
-   ("monty_hall_n should return True or False",
-    lambda g: isinstance(g("monty_hall_n")(3, True), (bool, np.bool_))),
-   ("With 3 doors, staying should win about 1/3 of the time",
-    lambda g: _close(_rate(g, 3, False), 1 / 3, 0.04)),
-   ("With 3 doors, switching should win about 2/3 of the time",
-    lambda g: _close(_rate(g, 3, True), 2 / 3, 0.04)),
-   ("With 4 doors, staying should win about 1/4 of the time",
-    lambda g: _close(_rate(g, 4, False), 1 / 4, 0.04)),
-   ("With 4 doors, switching should win about 3/8. Monty opens ONE goat door, and you switch "
-    "to a random door that is neither your pick nor the opened one.",
-    lambda g: _close(_rate(g, 4, True), 3 / 8, 0.04)),
-   )
-
-_q("q3_2",
-   ("`monty_table` should have columns 'doors', 'stay', 'switch' and one row per door count",
-    lambda g: list(g("monty_table").columns) == ["doors", "stay", "switch"] and list(g("monty_table")["doors"]) == [3, 4, 5, 10]),
-   ("The 'stay' column should be close to 1/doors",
-    lambda g: np.allclose(g("monty_table")["stay"], 1 / np.array([3, 4, 5, 10]), atol=0.03)),
-   ("The 'switch' column should be close to (n-1) / (n(n-2))",
-    lambda g: np.allclose(g("monty_table")["switch"],
-                          [(n - 1) / (n * (n - 2)) for n in [3, 4, 5, 10]], atol=0.03)),
-   ("Compare the columns. Is switching better for every number of doors?",
-    lambda g: g("always_switch") is True),
-   )
-
 
 # ----------------------------------------------------------------------------
 # public functions
